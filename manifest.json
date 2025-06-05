@@ -1,8 +1,7 @@
-
 {
-  "name": "منيو  ورد",
+  "name": "منيو ورد",
   "short_name": "منيو ورد",
-  "start_url": "index.html",
+  "start_url": "/menu/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#551665",
