@@ -1,10 +1,10 @@
 const cacheName = "menu-cache-v1";
 const assets = [
-  "/",
-  "/index.html",
-  "/style.css",
-  "/photos/logo.png"
-  // يمكنك إضافة ملفات/صور أخرى هنا لاحقًا لدعم التصفح بدون إنترنت بشكل أوسع
+  "./",
+  "./index.html",
+  "./style.css",
+  "./photos/logo.png",
+  "./manifest.json"
 ];
 
 self.addEventListener("install", (event) => {
