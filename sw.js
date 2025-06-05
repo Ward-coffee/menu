@@ -1,6 +1,3 @@
-// =========================
-// ملف: sw.js
-// =========================
 const cacheName = "menu-cache-v1";
 const assets = [
   "/",
