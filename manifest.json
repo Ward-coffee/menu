@@ -3,7 +3,7 @@
   "short_name": "منيو ورد",
   "start_url": "/menu/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#551665",
   "theme_color": "#551665",
   "orientation": "portrait",
   "icons": [
