@@ -1,62 +1,78 @@
-<!-- =========================
-     ملف: index.html
-========================= -->
 <!DOCTYPE html>
-<html lang="ar" dir="rtl"> <!-- وضع RTL للغة العربية -->
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>منيو مطعم ورد</title>
 
   <link rel="icon" href="photos/logo.png" type="image/x-icon">
-  <link rel="stylesheet" href="style.css"> <!-- ربط بملف CSS الخارجي -->
+  <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#551665">
 </head>
 
 <body>
-  <!-- زر تثبيت التطبيق -->
-  <button id="installBtn" style="
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 9999;
-    padding: 10px 15px;
-    background-color: #551665;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    display: none;
-  ">
-    📲 تثبيت التطبيق
-  </button>
+  <!-- رسالة/رابط طلب الإذن لتثبيت التطبيق -->
+  <div id="installPromptContainer" style="
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 9999;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      display: none;
+    ">
+    هذا الموقع يمكن تثبيته كتطبيق على جهازك.<br>
+    <a href="#" id="installLink" style="
+        color: #FFD700;
+        text-decoration: underline;
+        cursor: pointer;
+      ">
+      اضغط هنا لتثبيت التطبيق
+    </a>
+  </div>
 
   <script>
     let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
+    const installPromptContainer = document.getElementById('installPromptContainer');
+    const installLink = document.getElementById('installLink');
 
+    // 1) التقاط حدث beforeinstallprompt عندما تكون شروط PWA مستوفاة
     window.addEventListener('beforeinstallprompt', (e) => {
+      // نمنع المتصفح من عرض النافذة التلقائي
       e.preventDefault();
       deferredPrompt = e;
-      installBtn.style.display = 'block';
 
-      installBtn.addEventListener('click', () => {
-        installBtn.style.display = 'none';
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('✅ تم تثبيت التطبيق');
-          } else {
-            console.log('❌ تم إلغاء التثبيت');
-          }
-          deferredPrompt = null;
-        });
+      // نظهر صندوق الطلب للمستخدم
+      installPromptContainer.style.display = 'block';
+    });
+
+    // 2) عند نقر المستخدم على الرابط داخل الصندوق
+    installLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      // نخفي صندوق الطلب فوراً
+      installPromptContainer.style.display = 'none';
+
+      // نستدعي نافذة تثبيت التطبيق
+      deferredPrompt.prompt();
+
+      // نتتبع اختيار المستخدم (تثبيت أم إلغاء)
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('✅ المستخدم قام بالموافقة على التثبيت');
+        } else {
+          console.log('❌ المستخدم رفض التثبيت');
+        }
+        // بعد التثبيت أو الرفض، نُعيد المتغير إلى null
+        deferredPrompt = null;
       });
     });
   </script>
 
-
+  <!-- بداية محتوى الصفحة -->
   <div class="page-frame">
     <!-- الشريط العلوي -->
     <div class="header" style="position: relative; height: 250px;">
@@ -64,8 +80,8 @@
       <div class="logo-text">
         مطعم وكافيه "ورد" يقدم تجربة طعام صحية وشهية بمكونات طبيعية طازجة.
         نستخدم زيت الزيتون ونغسل الخضروات بعناية لضمان نظافتها.
-        نبتعد عن المنكهات الصناعية والملح الصيني، 
-        ونعتمد أدوات طهي صحية ومعايير نظافة عالمية. 
+        نبتعد عن المنكهات الصناعية والملح الصيني،
+        ونعتمد أدوات طهي صحية ومعايير نظافة عالمية.
         صور أطباقنا واقعية كما تُقدَّم، لأن الأمانة تبدأ من المطبخ.
       </div>
     </div>
@@ -120,7 +136,6 @@
       }
     </script>
 
-
     <!-- القائمة الأفقية -->
     <div class="category-scroll">
       <div class="categories">
@@ -147,7 +162,7 @@
     <a href="fedback.html" aria-label="صفحة الموقع">
       <button type="button">
         <div class="location">
-          <img src="photos/qusition.png" alt="location" class="location-img" width="20" height="20">
+          <img src="photos/qusition.png" alt="feedback" class="location-img" width="20" height="20">
         </div>
       </button>
     </a>
@@ -160,7 +175,6 @@
       </button>
     </a>
   </nav>
-
 
   <!-- سكربت عرض البيانات -->
   <script>
@@ -308,14 +322,14 @@
       ]
     };
 
-    // تسجيل Service Worker
+    // تسجيل Service Worker (PWA)
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
         .then(() => console.log("✅ تم تسجيل Service Worker"))
         .catch(err => console.error("❌ فشل التسجيل:", err));
     }
 
-    // دالة عرض المنتجات
+    // دالة عرض المنتجات بناءً على التصنيف
     function renderFoodItems(category) {
       const container = document.getElementById('food-list');
       container.innerHTML = '';
@@ -333,7 +347,7 @@
       });
     }
 
-    // تغيير التصنيف عند الضغط على زر
+    // ربط أزرار التصنيفات بالدالة
     document.querySelectorAll('.category').forEach(button => {
       button.addEventListener('click', () => {
         document.querySelectorAll('.category').forEach(btn => btn.classList.remove('selected'));
@@ -343,7 +357,7 @@
       });
     });
 
-    // عرض التصنيف الأول افتراضيًا
+    // عرض قسم "الافطار" افتراضيًا عند التحميل
     window.onload = () => {
       renderFoodItems("الافطار");
     };
