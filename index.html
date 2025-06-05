@@ -5,10 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>منيو مطعم ورد</title>
 
+  <!-- أيقونة الموقع -->
   <link rel="icon" href="photos/logo.png" type="image/x-icon">
+  <!-- ملف التصميم الخارجى -->
   <link rel="stylesheet" href="style.css">
+  <!-- ملف المانيفست الخاص بالتطبيق -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#551665">
+
+  <!-- دعم التثبيت على iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="photos/logo.png">
 </head>
 
 <body>
@@ -35,41 +43,71 @@
     </a>
   </div>
 
+  <!-- ملاحظة تثبيت خاصة بـ iOS -->
+  <div id="iosInstallHint" style="
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      left: 20px;
+      z-index: 9999;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+    ">
+    لتثبيت التطبيق: اضغط على زر <b>المشاركة</b> ثم اختر <b>"إضافة إلى الشاشة الرئيسية"</b>.
+  </div>
+
   <script>
     let deferredPrompt;
     const installPromptContainer = document.getElementById('installPromptContainer');
     const installLink = document.getElementById('installLink');
 
-    // 1) التقاط حدث beforeinstallprompt عندما تكون شروط PWA مستوفاة
+    // التقاط حدث beforeinstallprompt عندما تكون شروط PWA مستوفاة
     window.addEventListener('beforeinstallprompt', (e) => {
-      // نمنع المتصفح من عرض النافذة التلقائي
       e.preventDefault();
       deferredPrompt = e;
-
       // نظهر صندوق الطلب للمستخدم
       installPromptContainer.style.display = 'block';
     });
 
-    // 2) عند نقر المستخدم على الرابط داخل الصندوق
+    // إجبار المستخدم على رؤية زر التثبيت بعد 5 ثوانٍ
+    setTimeout(() => {
+      if (!deferredPrompt) {
+        installPromptContainer.style.display = 'block';
+      }
+    }, 5000);
+
+    // عند نقر المستخدم على الرابط داخل الصندوق
     installLink.addEventListener('click', (event) => {
       event.preventDefault();
       // نخفي صندوق الطلب فوراً
       installPromptContainer.style.display = 'none';
 
-      // نستدعي نافذة تثبيت التطبيق
-      deferredPrompt.prompt();
-
-      // نتتبع اختيار المستخدم (تثبيت أم إلغاء)
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('✅ المستخدم قام بالموافقة على التثبيت');
-        } else {
-          console.log('❌ المستخدم رفض التثبيت');
-        }
-        // بعد التثبيت أو الرفض، نُعيد المتغير إلى null
-        deferredPrompt = null;
-      });
+      if (deferredPrompt) {
+        // نستدعي نافذة تثبيت التطبيق
+        deferredPrompt.prompt();
+        // نتتبع اختيار المستخدم (تثبيت أم إلغاء)
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('✅ المستخدم وافق على التثبيت');
+          } else {
+            console.log('❌ المستخدم رفض التثبيت');
+          }
+          // بعد التثبيت أو الرفض، نُعيد المتغير إلى null
+          deferredPrompt = null;
+        });
+      }
     });
+
+    // دعم iOS: إظهار التنبيه اليدوي لتثبيت التطبيق
+    const isIOS = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
+
+    if (isIOS && !isInStandaloneMode) {
+      document.getElementById('iosInstallHint').style.display = 'block';
+    }
   </script>
 
   <!-- بداية محتوى الصفحة -->
