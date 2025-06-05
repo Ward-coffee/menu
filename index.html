@@ -9,8 +9,52 @@
   <link rel="stylesheet" href="style.css"> <!-- ربط بملف CSS الخارجي -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#551665">
-
 </head>
+
+<body>
+
+  <!-- زر تثبيت التطبيق -->
+  <button id="installBtn" style="
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    padding: 10px 15px;
+    background-color: #551665;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    display: none;
+  ">
+    📲 تثبيت التطبيق
+  </button>
+
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block';
+
+      installBtn.addEventListener('click', () => {
+        installBtn.style.display = 'none';
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('✅ تم تثبيت التطبيق');
+          } else {
+            console.log('❌ تم إلغاء التثبيت');
+          }
+          deferredPrompt = null;
+        });
+      });
+    });
+  </script>
+
+
 
 <body>
   <div class="page-frame">
