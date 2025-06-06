@@ -7,7 +7,7 @@
 
   <!-- أيقونة الموقع -->
   <link rel="icon" href="photos/logo.png" type="image/x-icon">
-  <!-- ملف التصميم الخارجى -->
+  <!-- ملف التصميم الخارجي -->
   <link rel="stylesheet" href="style.css">
   <!-- ملف المانيفست الخاص بالتطبيق -->
   <link rel="manifest" href="manifest.json">
@@ -20,7 +20,7 @@
 </head>
 
 <body>
-  <!-- رسالة/رابط طلب الإذن لتثبيت التطبيق -->
+  <!-- رسالة/رابط طلب الإذن لتثبيت التطبيق (تظهر فقط بعد وقوع حدث beforeinstallprompt) -->
   <div id="installPromptContainer" style="
       position: fixed;
       bottom: 20px;
@@ -43,7 +43,7 @@
     </a>
   </div>
 
-  <!-- ملاحظة تثبيت خاصة بـ iOS -->
+  <!-- ملاحظة تثبيت خاصة بـ iOS (تظهر فقط على آيفون/آيباد خارج وضع Standalone) -->
   <div id="iosInstallHint" style="
       display: none;
       position: fixed;
@@ -64,20 +64,13 @@
     const installPromptContainer = document.getElementById('installPromptContainer');
     const installLink = document.getElementById('installLink');
 
-    // التقاط حدث beforeinstallprompt عندما تكون شروط PWA مستوفاة
+    // عندما يستوفي المتصفح شروط PWA ويطلق حدث beforeinstallprompt
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      // نظهر صندوق الطلب للمستخدم
+      // نظهر صندوق الطلب للمستخدم فقط لأن المتصفح بالفعل جاهز للتثبيت
       installPromptContainer.style.display = 'block';
     });
-
-    // إجبار المستخدم على رؤية زر التثبيت بعد 5 ثوانٍ
-    setTimeout(() => {
-      if (!deferredPrompt) {
-        installPromptContainer.style.display = 'block';
-      }
-    }, 5000);
 
     // عند نقر المستخدم على الرابط داخل الصندوق
     installLink.addEventListener('click', (event) => {
@@ -95,16 +88,15 @@
           } else {
             console.log('❌ المستخدم رفض التثبيت');
           }
-          // بعد التثبيت أو الرفض، نُعيد المتغير إلى null
+          // بعد التثبيت أو الرفض، نُعيد المتغير إلى null حتى لا يُعاد استخدامه
           deferredPrompt = null;
         });
       }
     });
 
-    // دعم iOS: إظهار التنبيه اليدوي لتثبيت التطبيق
+    // دعم iOS: إظهار التنبيه اليدوي لتثبيت التطبيق إن كان على iOS وخارج وضع Standalone
     const isIOS = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
     const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
-
     if (isIOS && !isInStandaloneMode) {
       document.getElementById('iosInstallHint').style.display = 'block';
     }
@@ -222,7 +214,7 @@
         { name: "خبز طاوه مع المقبلات و شاي حليب", price: "1800", image: "photos/breakfast/14_breakfast.jpg" },
         { name: "بيض مع المقبلات", price: "1500", image: "photos/breakfast/12_breakfast.jpg" },
         { name: "فطور مصري 4 اشخاص-الطلب بالحجز", price: "7000", image: "photos/breakfast/1_breakfast.jpg" },
-        { name: "فاصوليا مع المقبلات", price: "1500", image: "photos/breakfast/4_breakfast.jpg" }, 
+        { name: "فاصوليا مع المقبلات", price: "1500", image: "photos/breakfast/4_breakfast.jpg" },
         { name: "مطيط", price: "1200", image: "photos/breakfast/15_breakfast.jpeg" },
         { name: "فرنش توست مع شاي", price: "1000", image: "photos/breakfast/7_breakfast.jpeg" },
         { name: "فرنش توست مع عصير فراوله", price: "1500", image: "photos/breakfast/6_breakfast.jpeg" },
@@ -235,8 +227,8 @@
         { name: "طبق بهجه", price: "5000", image: "photos/breakfast/5_breakfast.jpg" },
         { name: "فطرو شامي 4 اشخاص - الطلب بالحجز", price: "7000", image: "photos/breakfast/9_breakfast.jpg" },
         { name: "فطور تركي 4 اشخاص-الطلب بالحجز", price: "7000", image: "photos/breakfast/8_breakfast.jpg" },
-        { name: "فطور 8 اشخاص-الطلب بالحجز", price: "15000", image: "photos/breakfast/16_breakfast.jpg" }, 
-        { name: "اضافه خبز", price: "500", image: "photos/breakfast/3_breakfast.jpeg" },
+        { name: "فطور 8 اشخاص-الطلب بالحجز", price: "15000", image: "photos/breakfast/16_breakfast.jpg" },
+        { name: "اضافه خبز", price: "500", image: "photos/breakfast/3_breakfast.jpeg" }
       ],
       الساندويتشات: [
         { name: "ساندويتش زنجر", price: "2500", image: "photos/Sandwiches/1.jpg" },
