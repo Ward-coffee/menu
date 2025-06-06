@@ -30,16 +30,17 @@ body {
 .header {
   background: #551665;
   color: white;
-  padding: 1%;
+  padding: 12px 1%;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
   margin-bottom: 10px;
   position: relative;
-  height: 0px; /* لتحديد مساحة التأثير */
+  height: auto;
   overflow: hidden;
 }
+
 
 /* أنيميشن الشعار والنص */
 .logo-img,
