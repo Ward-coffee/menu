@@ -56,7 +56,9 @@ body {
   animation-timing-function: ease-in-out;
   text-align: center;
   max-width: 90%;
+  pointer-events: none; /* ⬅️ هذا هو المهم */
 }
+
 
 .logo-img {
   animation-name: show-logo;
