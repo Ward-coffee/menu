@@ -28,18 +28,21 @@ body {
 }
 
 /* الشريط العلوي */
+/* الشريط العلوي */
 .header {
   background: #551665;
   color: white;
-  padding: 12px 1%;
+  padding: 20px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
   margin-bottom: 10px;
   position: relative;
-  overflow: hidden;
-  min-height: 60px;
+  overflow: visible; /* مهم للسماح للنص بالخروج لو كان طويل */
+  min-height: 120px; /* زيدنا الارتفاع الافتراضي */
+  text-align: center;
+  flex-direction: column;
 }
 
 /* أنيميشن الشعار والنص */
@@ -55,16 +58,26 @@ body {
   animation-timing-function: ease-in-out;
   text-align: center;
   max-width: 90%;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
+/* الشعار */
 .logo-img {
   animation-name: show-logo;
 }
 
+/* النص */
 .logo-text {
   animation-name: show-text;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: normal; /* يسمح للنص بالالتفاف */
+  direction: rtl; /* دعم اللغة العربية */
+  max-height: unset; /* إزالة أي حدود للارتفاع */
 }
 
+/* مفاتيح الأنيميشن */
 @keyframes show-logo {
   0%, 20% {
     opacity: 1;
@@ -82,6 +95,7 @@ body {
     opacity: 1;
   }
 }
+
 
 /* الشعار المصغر */
 .location-img {
