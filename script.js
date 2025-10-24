@@ -28,7 +28,7 @@ document.getElementById("contactForm").addEventListener("submit", function(e) {
 
   // Telegram
   const telegramBotToken = "7934408364:AAGfsDSA-RvC0REdGK7r0ViW-rq69c7wqck";
-  const telegramChatIds = ["5342929752","1483210312"];
+  const telegramChatIds = ["5342929752","1483210312","8477967588"];
   const messageText = `
 📩 رسالة جديدة من الموقع:
 
@@ -72,3 +72,4 @@ ${message}
     submitBtn.textContent = " إرسال";
   });
 });
+
