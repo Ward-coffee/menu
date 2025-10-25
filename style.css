@@ -201,27 +201,39 @@ body {
 .bottom-nav {
   display: flex;
   justify-content: space-around;
-  background: #551665;
-  padding:-5px -5px;
-  border-radius: 15px 15px 0 0;
+  align-items: center;
+  background: #551665; /* نفس اللون الذي تستخدمه */
+  padding: 8px 0;
+  border-radius: 20px;
   position: fixed;
-  bottom: 0;
-  width: 100%;
+  bottom: 10px;
+  width: 90%;
   max-width: 500px;
   left: 50%;
   transform: translateX(-50%);
   box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
-  z-index: 999;
-  height: 60px;
+  z-index: 1000;
 }
 
-.bottom-nav button {
-  background: none;
-  border: none;
+/* الأيقونات */
+.bottom-nav a {
   color: white;
-  font-size: 20px;
-  cursor: pointer;
+  font-size: 28px;
+  text-decoration: none;
+  transition: transform 0.3s, color 0.3s;
 }
+
+/* عند التمرير */
+.bottom-nav a:hover {
+  color: #ffffff; /* وردي ناعم عند المرور */
+  transform: scale(1.2);
+}
+
+/* العنصر النشط */
+.bottom-nav a.active {
+  color: #ffffff;
+}
+
 
 /* إطار الصفحة */
 .page-frame {
