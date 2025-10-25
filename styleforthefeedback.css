@@ -92,7 +92,7 @@ body {
   margin-bottom: 15px;
   padding: 10px;
   font-size: 14px;
-  border: 2px solid #e6e3da;
+  border: 2px solid #ffffff;
   border-radius: 8px;
   outline: none;
   transition: border-color 0.3s ease;
@@ -142,7 +142,8 @@ body {
 .bottom-nav {
   display: flex;
   justify-content: space-around;
-  background: #551665;
+  align-items: center;
+  background: #551665; /* نفس اللون الذي تستخدمه */
   padding: 8px 0;
   border-radius: 20px;
   position: fixed;
@@ -152,11 +153,24 @@ body {
   left: 50%;
   transform: translateX(-50%);
   box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
-.bottom-nav button {
-  background: none;
-  border: none;
+/* الأيقونات */
+.bottom-nav a {
   color: white;
-  font-size: 30px;
+  font-size: 28px;
+  text-decoration: none;
+  transition: transform 0.3s, color 0.3s;
+}
+
+/* عند التمرير */
+.bottom-nav a:hover {
+  color: #ffffff; /* وردي ناعم عند المرور */
+  transform: scale(1.2);
+}
+
+/* العنصر النشط */
+.bottom-nav a.active {
+  color: #ffffff;
 }
