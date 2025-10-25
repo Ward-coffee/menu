@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>صفحة الموقع</title>
   <link rel="icon" href="photos/logo.png" type="image/x-icon">
   <link rel="stylesheet" href="styleforthefeedback.css">
@@ -38,22 +39,35 @@
 
         <!-- روابط التواصل الاجتماعي -->
         <div class="social-icons">
-          <a href="https://www.facebook.com/share/195cNDyHZM/" aria-label="صفحة الموقع">
+          <!-- فيسبوك -->
+          <a href="https://www.facebook.com/share/195cNDyHZM/" aria-label="صفحة فيسبوك" target="_blank">
             <button type="button">
               <div class="location">
-                <img src="photos/facebook-icon.png" alt="facebook" class="location-img" width="25" height="25">
+                <i class="fab fa-facebook" style="color:#1877F2; font-size:25px;"></i>
               </div>
             </button>
           </a>
 
-          <a href="https://www.instagram.com/ward_where_u_bloom/" aria-label="صفحة الموقع">
+          <!-- إنستغرام -->
+          <a href="https://www.instagram.com/ward_where_u_bloom/" aria-label="صفحة إنستغرام" target="_blank">
             <button type="button">
               <div class="location">
-                <img src="photos/instagram-icon.png" alt="instagram" class="location-img" width="25" height="25">
+                <i class="fab fa-instagram" style="color:#E4405F; font-size:25px;"></i>
+              </div>
+            </button>
+          </a>
+
+          <!-- واتساب -->
+          <a href="https://api.whatsapp.com/send?phone=967784056578" aria-label="واتساب" target="_blank">
+            <button type="button">
+              <div class="location">
+                <i class="fab fa-whatsapp" style="color:#25D366; font-size:25px;"></i>
               </div>
             </button>
           </a>
         </div>
+
+
       </div>
     </div>
   </div>
@@ -61,16 +75,17 @@
   <!-- شريط التنقل السفلي -->
   <nav class="bottom-nav">
     <a href="index.html" aria-label="الصفحة الرئيسية">
-      <button type="button">🏠</button>
+      <i class="fas fa-home"></i>
     </a>
-    <a href="fedback.html" aria-label="صفحة الموقع">
-      <button type="button">
-        <div class="location">
-          <img src="photos\qusition.png" alt="location" class="location-img" width="25" height="25">
-        </div>
-      </button>
+    <a href="menu.html" aria-label="المنيو">
+      <i class="fas fa-utensils"></i>
     </a>
+    <a href="fedback.html" aria-label="الشكاوى والاقتراحات" class="active">
+      <i class="fas fa-comment-dots"></i>
+    </a>
+
   </nav>
+
 
   <script src="script.js"></script>
 </body>
