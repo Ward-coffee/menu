@@ -248,18 +248,34 @@ body {
     margin: 10px;
     padding: 6px 10px;
   }
-}
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(4, 2fr);
-  grid-template-rows: repeat(4, auto);
-  gap: 5px;
-  padding: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+  padding: 10px;
   justify-items: center;
   background: #fff9ec;
   border-radius: 12px;
-
 }
+
+@media (max-width: 480px) {
+  .categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .category {
+    font-size: 14px;
+    width: 100%;
+    padding: 8px;
+  }
+
+  .logo-text {
+    font-size: 12px;
+    padding: 0 10px;
+  }
+}
+
 /* بطاقات الطعام */
 .food-card {
   margin: 15px;
@@ -294,4 +310,5 @@ body {
   color: #777;
   margin-top: 5px;
 }
+
 
