@@ -240,10 +240,9 @@
 
 
   <!-- سكربت عرض البيانات -->
- <script>
-    // 1. تعريف المتغيرات الأساسية
-    let foodData = {
-            الافطار: [
+  <script>
+    const foodData = {
+      الافطار: [
         { name: "خبز طاوه مع المقبلات و شاي", price: "1500", image: "photos/breakfast/13_breakfast.jpeg" },
         { name: "خبز طاوه مع المقبلات و شاي حليب", price: "1800", image: "photos/breakfast/14_breakfast.jpg" },
         { name: "بيض مع المقبلات", price: "1500", image: "photos/breakfast/12_breakfast.jpg" },
@@ -399,92 +398,50 @@
         { name: "شيشة نكهات", price: "3000" },
         { name: "شيشة شموخ", price: "4000" }
       ]
-    }; 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwC1z6ekYGfMf6V7aWGZj5qPH2zhgIeE78EJlFriRfFpn9m8BTfJ1NrYqPGlJMZfEX/exec";
-
-    // 2. دالة جلب البيانات من Google Sheets
-// 2. دالة جلب البيانات من Google Sheets مع خاصية الدمج
-    async function fetchMenuData() {
-        try {
-            const response = await fetch(SCRIPT_URL);
-            if (!response.ok) throw new Error("Network response was not ok");
-            
-            const freshData = await response.json();
-            
-            if (freshData && Object.keys(freshData).length > 0) {
-                // دمج البيانات: نمر على كل تصنيف في البيانات القادمة من جوجل
-                for (const category in freshData) {
-                    // شرط: إذا كان التصنيف في جوجل يحتوي على وجبات (ليس فارغاً)
-                    if (freshData[category] && freshData[category].length > 0) {
-                        // نقوم بتحديث هذا التصنيف فقط في كائن foodData الأساسي
-                        foodData[category] = freshData[category];
-                    }
-                    // إذا كان فارغاً في جوجل، سيتجاهله الكود ويحتفظ بالبيانات المحلية الموجودة مسبقاً
-                }
-
-                console.log("✅ تم دمج البيانات: تحديث الأصناف المتوفرة والاحتفاظ بالبقية محلياً");
-                
-                // إعادة عرض التصنيف المختار حالياً لتحديث الواجهة
-                const selectedBtn = document.querySelector('.category.selected');
-                if (selectedBtn) {
-                    const activeCategory = selectedBtn.innerText.trim().split('\n')[1];
-                    renderFoodItems(activeCategory);
-                }
-            }
-        } catch (error) {
-            console.error("⚠️ فشل التحديث، العمل مستمر بالبيانات المحلية:", error);
-        }
-    }
-
-    // 3. دالة عرض المنتجات (تبقى كما هي في منطقها)
-    function renderFoodItems(category) {
-        const container = document.getElementById('food-list');
-        container.innerHTML = '';
-        
-        if (!foodData[category] || foodData[category].length === 0) {
-            container.innerHTML = `<p style="text-align:center; padding: 20px;">لا توجد أصناف متوفرة في قسم ${category} حالياً.</p>`;
-            return;
-        }
-
-        foodData[category].forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'food-card';
-            card.innerHTML = `
-                ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none';">` : ""}
-                <div class="food-info">
-                    <h4>${item.price} <span>${item.name}</span></h4>
-                    ${item.description ? `<p>${item.description}</p>` : ""}
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    // 4. تشغيل العرض الفوري ثم البدء بالجلب السحابي
-    window.onload = () => {
-        // عرض البيانات المحلية فوراً (الافطار كديفولت)
-        renderFoodItems("الافطار");
-        
-        // البدء بجلب البيانات الجديدة من جوجل في الخلفية
-        fetchMenuData();
     };
 
-    // (بقية الدوال: البحث، وربط الأزرار تبقى كما هي في كودك السابق)
+    // تسجيل Service Worker (PWA)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("✅ تم تسجيل Service Worker"))
+        .catch(err => console.error("❌ فشل التسجيل:", err));
+    }
+
+    // دالة عرض المنتجات بناءً على التصنيف
+    function renderFoodItems(category) {
+      const container = document.getElementById('food-list');
+      container.innerHTML = '';
+      foodData[category]?.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'food-card';
+        card.innerHTML = `
+          ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none';">` : ""}
+          <div class="food-info">
+            <h4>${item.price} <span>${item.name}</span></h4>
+            ${item.description ? `<p>${item.description}</p>` : ""}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ربط أزرار التصنيفات بالدالة
     document.querySelectorAll('.category').forEach(button => {
-        button.addEventListener('click', () => {
-            document.querySelectorAll('.category').forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            const categoryText = button.innerText.trim().split('\n')[1];
-            renderFoodItems(categoryText);
-        });
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.category').forEach(btn => btn.classList.remove('selected'));
+        button.classList.add('selected');
+        const categoryText = button.innerText.trim().split('\n')[1];
+        renderFoodItems(categoryText);
+      });
     });
-</script>
+
+    // عرض قسم "الافطار" افتراضيًا عند التحميل
+    window.onload = () => {
+      renderFoodItems("الافطار");
+    };
+  </script>
 </body>
 </html>
-
-
-
-
 
 
 
