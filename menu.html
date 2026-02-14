@@ -1,184 +1,473 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>منيو ورد كافيه</title>
+  <!-- أيقونة الموقع -->
   <link rel="icon" href="photos/logo.png" type="image/x-icon">
+  <!-- ملف التصميم  -->
+  <link rel="stylesheet" href="style.css">
+  <!-- ملف المانيفست الخاص بالتطبيق -->
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#551665">
 
+  <!-- دعم التثبيت على iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="photos/logo.png">
+
+  <!-- زر الرجوع للصفحة الرئيسية - ستايل مدمج لإظهاره مباشرة -->
   <style>
-    /* تحسينات CSS للأداء */
-    body { margin: 0; padding-bottom: 80px; font-family: sans-serif; background: #fff9ec; }
-    .page-frame { border: 4px solid #551665; border-radius: 15px; margin: 5px; background: #fff; min-height: 100vh; }
-    
-    .header { 
-      background: #551665; color: white; min-height: 150px; 
-      display: flex; align-items: center; justify-content: center; 
-      position: relative; text-align: center; padding: 10px;
+    /* زر الرئيسية */
+    .home-btn {
+      position: absolute;
+      right: 12px;    /* وضع الزر في الجهة اليمنى (لـ RTL هذه هي الزاوية الصحيحة) */
+      bottom: 12px;   /* وضع الزر في الأسفل */
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      background: linear-gradient(135deg,#8E44AD 0%, #551665 100%);
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(106,13,173,0.12);
+      font-weight: 600;
+      font-family: inherit;
+      z-index: 50;
+      border: 1px solid rgba(255,255,255,0.12);
+      -webkit-tap-highlight-color: transparent;
+      /* ضمان أن النص والآيكون يتناسبان مع RTL */
+      direction: rtl;
     }
 
-    /* تحسين الأنيميشن ليكون أخف على المعالج */
-    .logo-img, .logo-text { position: absolute; width: 80%; transition: opacity 0.5s; }
-    .hidden { opacity: 0; visibility: hidden; }
-    .visible { opacity: 1; visibility: visible; }
+    .home-btn svg { width:18px; height:18px; display:block; flex-shrink:0; }
 
-    .search-bar { margin: 10px; display: flex; background: #eee; border-radius: 10px; padding: 5px 15px; }
-    .search-bar input { flex: 1; border: none; background: transparent; padding: 10px; font-size: 16px; outline: none; }
+    .home-btn span { font-size: 15px; line-height: 1; }
 
-    .categories-grid { 
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; 
-      padding: 10px; sticky; top: 0; z-index: 10; background: #fff9ec;
+    .home-btn:active { transform: translateY(1px); }
+    .home-btn:focus { outline: 3px solid rgba(138,81,201,0.16); outline-offset: 3px; }
+
+    /* استجابة على الشاشات الصغيرة */
+    @media (max-width:480px) {
+      .home-btn { right: 10px; bottom: 10px; padding: 8px 10px; border-radius:10px; }
+      .home-btn span { font-size: 14px; }
+      .home-btn svg { width:16px; height:16px; }
+      .header { height: 200px; } /* يتماشى مع تقليل ارتفاع الهيدر على الهاتف */
     }
-    .category { background: #e6e3da; border: none; padding: 8px 2px; border-radius: 8px; font-size: 11px; cursor: pointer; }
-    .category.selected { background: #551665; color: white; }
 
-    .food-card { 
-      margin: 10px; background: white; border-radius: 12px; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column;
-    }
-    .food-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px 12px 0 0; background: #f0f0f0; }
-    .food-info { padding: 12px; }
-    .food-info h4 { margin: 0; display: flex; justify-content: space-between; font-size: 15px; }
-    
-    .bottom-nav {
-      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
-      width: 90%; background: #551665; display: flex; justify-content: space-around;
-      padding: 10px 0; border-radius: 50px; z-index: 1000;
-    }
-    .bottom-nav a { color: white; text-decoration: none; font-size: 20px; text-align: center; }
-    .bottom-nav span { display: block; font-size: 10px; }
-
-    #loading-state { text-align: center; padding: 20px; font-weight: bold; color: #551665; }
+    /* في حال وجود conflict مع style.css نرفع z-index */
+    .header { position: relative; overflow: hidden; }
   </style>
 </head>
+
 <body>
-
-<div class="page-frame">
-  <div class="header" id="header-box">
-    <img src="photos/logo.png" alt="Logo" class="logo-img visible" id="logo-img">
-    <div class="logo-text hidden" id="logo-txt">مطعم وكافيه ورد<br>طعم صحي وطبيعي</div>
+  <!-- رسالة/رابط طلب الإذن لتثبيت التطبيق -->
+  <div id="installPromptContainer" style="
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 9999;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 6px 6px;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      display: none;
+    ">
+    هذا الموقع يمكن تثبيته كتطبيق على جهازك.<br>
+    <a href="#" id="installLink" style="
+        color: #FFD700;
+        text-decoration: underline;
+        cursor: pointer;
+      ">
+      اضغط هنا لتثبيت التطبيق
+    </a>
   </div>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="بحث عن وجبة أو سعر..." onkeyup="debounceSearch()">
+  <!-- ملاحظة تثبيت خاصة بـ iOS -->
+  <div id="iosInstallHint" style="
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      left: 20px;
+      z-index: 9999;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 6px 6px;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+    ">
+    لتثبيت التطبيق: اضغط على زر <b>المشاركة</b> ثم اختر <b>"إضافة إلى الشاشة الرئيسية"</b>.
   </div>
 
-  <div class="categories-grid" id="cat-grid">
+  <script>
+    let deferredPrompt;
+    const installPromptContainer = document.getElementById('installPromptContainer');
+    const installLink = document.getElementById('installLink');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installPromptContainer.style.display = 'block';
+    });
+
+    installLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      installPromptContainer.style.display = 'none';
+
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('✅ المستخدم وافق على التثبيت');
+          } else {
+            console.log('❌ المستخدم رفض التثبيت');
+          }
+          deferredPrompt = null;
+        });
+      }
+    });
+
+    const isIOS = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
+
+    if (isIOS && !isInStandaloneMode) {
+      document.getElementById('iosInstallHint').style.display = 'block';
+    }
+  </script>
+
+  <!-- بداية محتوى الصفحة -->
+  <div class="page-frame">
+    <!-- الشريط العلوي -->
+    <div class="header" style="position: relative; height: 200px;">
+      <img src="photos/logo.png" alt="Logo" class="logo-img">
+      <div class="logo-text">
+        مطعم وكافيه "ورد" يقدم تجربة طعام صحية وشهية بمكونات طبيعية طازجة.
+        نستخدم زيت الزيتون ونغسل الخضروات بعناية لضمان نظافتها.
+        نبتعد عن المنكهات الصناعية والملح الصيني،
+        ونعتمد أدوات طهي صحية ومعايير نظافة عالمية.
+        صور أطباقنا واقعية كما تُقدَّم، لأن الأمانة تبدأ من المطبخ.
+      </div>
     </div>
 
-  <div id="loading-state">جاري التحميل... 🌸</div>
-  <div id="food-list"></div>
-</div>
+    <!-- شريط البحث -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="بحث...">
+      <button onclick="search()">🔍</button>
+    </div>
 
-<nav class="bottom-nav">
-  <a href="fedback.html">💬<span>آرائكم</span></a>
-  <a href="index.html">🏠<span>الرئيسية</span></a>
-  <a href="map.html">📍<span>موقعنا</span></a>
-</nav>
+    <script>
+      function search() {
+        const query = document.getElementById('searchInput').value.trim();
+        const container = document.getElementById('food-list');
+        container.innerHTML = '';
 
-<script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwF6QRoxTgFhZiU1fkCIOkUiIsbnNfH5rRufLxz5bg8HhnCJcjs675LZI4gtarBFgRB/exec";
-  let foodData = {};
-  let timer;
+        if (!query) {
+          alert("الرجاء إدخال كلمة للبحث");
+          return;
+        }
 
-  // 1. تبديل اللوجو والنص بشكل أخف
-  setInterval(() => {
-    const img = document.getElementById('logo-img');
-    const txt = document.getElementById('logo-txt');
-    img.classList.toggle('hidden'); img.classList.toggle('visible');
-    txt.classList.toggle('hidden'); txt.classList.toggle('visible');
-  }, 5000);
+        let resultsFound = false;
+        const maxPrice = !isNaN(query) ? parseFloat(query) : null;
 
-  // 2. جلب البيانات مع التخزين المؤقت الذكي
-  async function init() {
-    const cached = localStorage.getItem('menu_data');
-    if (cached) {
-      foodData = JSON.parse(cached);
-      setupCategories();
-      render('الافطار');
-      document.getElementById('loading-state').style.display = 'none';
-    }
-    
-    try {
-      const res = await fetch(`${SCRIPT_URL}?action=read`);
-      const rawData = await res.json();
-      
-      // تنظيم البيانات بشكل أسرع للبحث والفلترة
-      const organized = {};
-      rawData.forEach(item => {
-        if (!organized[item.category]) organized[item.category] = [];
-        organized[item.category].push(item);
-      });
+        for (const category in foodData) {
+          foodData[category].forEach(item => {
+            const itemName = item.name || "";
+            const itemPrice = parseFloat(item.price) || 0;
 
-      foodData = organized;
-      localStorage.setItem('menu_data', JSON.stringify(organized));
-      
-      if (!cached) {
-        setupCategories();
-        render('الافطار');
-        document.getElementById('loading-state').style.display = 'none';
+            const matchesName = itemName.includes(query);
+            const matchesPrice = maxPrice !== null && itemPrice <= maxPrice;
+
+            if (matchesName || matchesPrice) {
+              resultsFound = true;
+              const card = document.createElement('div');
+              card.className = 'food-card';
+              card.innerHTML = `
+                ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none';">` : ""}
+                <div class="food-info">
+                  <h4>${item.price} <span>${item.name}</span></h4>
+                  ${item.description ? `<p>${item.description}</p>` : ""}
+                </div>
+              `;
+              container.appendChild(card);
+            }
+          });
+        }
+
+        if (!resultsFound) {
+          container.innerHTML = `<p style="text-align:center; padding: 20px;">لا توجد نتائج تطابق "${query}"</p>`;
+        }
       }
-    } catch (e) {
-      console.error("الإنترنت ضعيف جداً");
+    </script>
+
+    <!-- القائمة الأفقية -->
+    <!-- القائمة (شبكة التصنيفات) -->
+    <div class="categories-grid">
+      <button class="category selected">🥗<br>الافطار</button>
+      <button class="category">🥪<br>ساندويتش</button>
+      <button class="category">🍕<br>البيتزا</button>
+      <button class="category">🌱<br>السلطات</button>
+      <button class="category">🍲<br>الشوربات</button>
+      <button class="category">🥨<br>سناك</button>
+      <button class="category">🍽️<br>الاطباق</button>
+      <button class="category">🍱<br>وجبات الأطفال</button>
+      <button class="category">🍰<br>الحلويات و الآيسكريم</button>
+      <button class="category">🥤<br>المشروبات الباردة</button>
+      <button class="category">☕️<br>المشروبات الساخنة</button>
+      <button class="category">💨<br>الشيش</button>
+    </div>
+
+    <!-- قسم الطعام (يتم ملؤه ديناميكيًا) -->
+    <div id="food-list"></div>
+
+  <!-- أزرار التنقل السفلية -->
+  <nav class="bottom-nav">
+    <a href="fedback.html" aria-label="الشكاوى والاقتراحات">
+      <i class="fas fa-comment-dots"></i>
+    </a>
+    <a href="index.html" aria-label="الصفحة الرئيسية">
+      <i class="fas fa-home"></i>
+    </a>
+    <a href="map.html" aria-label="صفحة الموقع">
+      <i class="fas fa-map-marker-alt"></i>
+    </a>
+  </nav>
+
+
+
+  <!-- سكربت عرض البيانات -->
+  <script>
+ const foodData = {
+  الافطار: [
+    { name: "فول يمني", price: "1000", image: "" },
+    { name: "فول لبناني", price: "1100", image: "photos/breakfast/20.jpeg" },
+    { name: "فول مصري", price: "1200", image: "photos/breakfast/21.jpeg" },
+    { name: "فول يمني مع المقبلات", price: "1500", image: "" },
+    { name: "بيض مع المقبلات", price: "1500", image: "photos/breakfast/12_breakfast.jpg" },
+    { name: "فاصوليا مع المقبلات", price: "1500", image: "photos/breakfast/4_breakfast.jpg" },
+    { name: "برعي مع المقبلات", price: "1200", image: "" },
+    { name: "إضافة بيض", price: "-", image: "" },
+    { name: "صبوح يمني (حجز مسبق)", price: "4600", image: "" },
+    { name: "صبوح جماعي (شاي حليب – احمر)", price: "4200", image: "" },
+    { name: "فطور تركي 4 اشخاص-الطلب بالحجز", price: "7000", image: "photos/breakfast/8_breakfast.jpg" },
+    { name: "فطرو شامي 4 اشخاص - الطلب بالحجز", price: "8000", image: "photos/breakfast/9_breakfast.jpg" },
+    { name: "فطور مصري 4 اشخاص-الطلب بالحجز", price: "7000", image: "photos/breakfast/1_breakfast.jpg" },
+    { name: "فطور شامل ( تركي - شامي- مصري) 8 اشخاص -الطلب بالحجز", price: "15000", image: "photos/breakfast/16_breakfast.jpg" },
+    { name: "مطيط", price: "1200", image: "photos/breakfast/15_breakfast.jpeg" },
+    { name: "بان كيك مع شاي", price: "1000", image: "photos/breakfast/10_breakfast.jpeg" },
+    { name: "بان كيك مع شاي حليب", price: "1500", image: "" },
+    { name: "فرنش توست", price: "700", image: "" },
+    { name: "فرنش توست مع شاي", price: "1000", image: "photos/breakfast/7_breakfast.jpg" },
+    { name: "فرنش توست مع شاي حليب", price: "1500", image: "" },
+    { name: "بان كيك مع عصير فراوله", price: "1500", image: "photos/breakfast/11_breakfast.jpeg" },
+    { name: "فرنش توست مع عصير فراوله", price: "1500", image: "photos/breakfast/6_breakfast.jpeg" },
+    { name: "خبز طاوه مع المقبلات و شاي", price: "1500", image: "photos/breakfast/13_breakfast.jpeg" },
+    { name: "خبز طاوه مع المقبلات و شاي حليب", price: "1800", image: "photos/breakfast/14_breakfast.jpg" },
+    { name: "اضافه خبز", price: "500", image: "photos/breakfast/3_breakfast.jpeg" },
+    { name: "خبز بطبوط (حسب التوفر)", price: "30", image: "" },
+    { name: "خبز سميط (حسب التوفر)", price: "500", image: "" },
+    { name: "روتي تركي", price: "1000", image: "" },
+    { name: "كرامبل بريد (شوكلاته-جبن)", price: "700", image: "photos/Snack/2.jpeg" },
+    { name: "باخمري", price: "600", image: "photos/breakfast/16_1breakfast.jpg" },
+    { name: "باخمري (10)", price: "1000", image: "" },
+    { name: "برعي", price: "600", image: "" },
+    { name: "زلابيا", price: "500", image: "" },
+    { name: "طعمية (حسب التوفر)", price: "80", image: "" },
+    { name: "بيض تركي", price: "1500", image: "photos/breakfast/19.jpeg" },
+    { name: "جوزلماة", price: "700", image: "" },
+    { name: "طبق كربوز", price: "5000", image: "photos/breakfast/2_breakfast.jpg" },
+    { name: "طبق بهجه", price: "5000", image: "photos/breakfast/5_breakfast.jpg" }
+  ],
+  ساندويتش: [
+    { name: "ساندويتش توست دجاج", price: "1500", image: "photos/Sandwiches/5.jpg" },
+    { name: "ساندويتش تونه بخبز التوست", price: "1000", image: "photos/Sandwiches/10.jpg" },
+    { name: "ساندويتش تونه بخبز البان", price: "1500", image: "" },
+    { name: "ساندويتش فاهيتا بخبز التورتيلا", price: "2500", image: "photos/Sandwiches/6.jpg" },
+    { name: "ساندويتش فاهيتا بخبز البان", price: "1700", image: "photos/Sandwiches/7.jpg" },
+    { name: "ساندويتش زنجر", price: "2500", image: "photos/Sandwiches/1.jpg" },
+    { name: "كاساديا", price: "2800", image: "photos/Sandwiches/11.jpeg" },
+    { name: "ساندويتش استربس دجاج بخبز التورتيلا", price: "2000", image: "photos/Sandwiches/9.jpg" },
+    { name: "بجرجر لحم", price: "2500", image: "photos/Sandwiches/3.png" },
+    { name: "بجرجر لحم وجبه", price: "3200", image: "" },
+    { name: "برجر دجاج", price: "2100", image: "photos/Sandwiches/2.png" },
+    { name: "ساندويتش ميني برجر لحم", price: "1300", image: "photos/Sandwiches/.jpeg" },
+    { name: "برجر دجاج وجبه", price: "2800", image: "" },
+    { name: "استربس وجبة", price: "2200", image: "photos/maindeshes/10.jpg" },
+    { name: "اضافه شبس", price: "600", image: "photos/Sandwiches/4.jpeg" }
+  ],
+  البيتزا: [
+    { name: "بيتزا دجاج", price: "4000", image: "photos/pizza/1_pizza.jpeg" },
+    { name: "بيتزا دجاج بصوص البيستو", price: "4500", image: "" },
+    { name: "بيتزا خضار", price: "3500", image: "photos/pizza/7.jpeg" },
+    { name: "بيتزا خضار بصوص البيستو", price: "4000", image: "" },
+    { name: "بيزا مرجريتا", price: "3000", image: "photos/pizza/3_pizza.jpeg" },
+    { name: "بيزا مرجريتا بصوص البيستو", price: "3500", image: "" },
+    { name: "بيتزا محبي الجبنة", price: "3500", image: "photos/pizza/6.jpg" },
+    { name: "بيتزا محبي الجبنة بصوص البيستو", price: "3800", image: "" },
+    { name: "مناقيش بالجبنه", price: "1200", image: "photos/breakfast/17.jpg" },
+    { name: "مناقيش بالزعتر", price: "1000", image: "photos/breakfast/18.jpg" }
+  ],
+  سناك: [
+    { name: "ناتشوز", price: "1300", image: "photos/Snack/1.jpeg" },
+    { name: "كرامبل بصوص الجبن", price: "700", image: "photos/Snack/2.jpeg" },
+    { name: "كرامبل بصوص الشوكالاته", price: "700", image: "" },
+    { name: "كرامبل بصوص البيستاشيو", price: "700", image: "" }
+  ],
+  الشوربات: [
+    { name: "شوربة عدس", price: "1000", image: "photos/soups/1.jpg" },
+    { name: "شوربة شوفان بالدجاج", price: "1300", image: "photos/soups/2.jpeg" },
+    { name: "شوربة كريمه بالدجاج", price: "1500", image: "photos/soups/3.jpeg" }
+  ],
+  "وجبات الأطفال": [
+    { name: "مكرونه بصوص الجبنه", price: "1000", image: "photos/kidsfood/1.jpg" },
+    { name: "ناجتس وجبه", price: "2000", image: "photos/kidsfood/3.jpg" },
+    { name: "6 حبات ناجتس", price: "1500", image: "photos/kidsfood/4.jpg" }
+  ],
+  السلطات: [
+    { name: "سلطه يونانيه", price: "900", image: "photos/Salads&Appetizers/1.jpg" },
+    { name: "سلطه فتوش", price: "1000", image: "photos/Salads&Appetizers/2.jpeg" },
+    { name: "سلطه جرجير", price: "1000", image: "photos/Salads&Appetizers/3.jpeg" },
+    { name: "حمص", price: "1000", image: "" }
+  ],
+  الاطباق: [
+    { name: "ستكي تاي تشكن", price: "1800", image: "photos/maindeshes/1.jpg" },
+    { name: "تاي تشكن مع الكاجو", price: "3000", image: "photos/maindeshes/2.jpg" },
+    { name: "تشكن ونجز بصوص البافلو", price: "2200", image: "photos/maindeshes/3.jpeg" },
+    { name: "مكرونه حمراء مع الصوص", price: "1200", image: "photos/maindeshes/5.jpg" },
+    { name: "مكرونه بيضاء مع الدجاج", price: "2200", image: "photos/maindeshes/.jpg" },
+    { name: "مكرونه بصوص الجبنه", price: "1500", image: "photos/maindeshes/8.png" },
+    { name: "مكرونه بصوص البيستو", price: "1600", image: "photos/maindeshes/11.jpeg" },
+    { name: "رز صيني", price: "1200", image: "photos/maindeshes/12.jpeg" },
+    { name: "تشكن فرايز", price: "2000", image: "" },
+    { name: "سلة شبس", price: "1300", image: "photos/maindeshes/9.jpeg" },
+    { name: "وجبه بوب كورن دجاج (حار - عادي)", price: "2200", image: "" },
+    { name: "بوب كورن دجاج (حار - عادي)", price: "1700", image: "photos/maindeshes/9.jpg" },
+    { name: "صوص ورد", price: "200", image: "" }
+  ],
+  "الحلويات و الآيسكريم": [
+    { name: "سويس رول بالشوكولاتة (حسب التوفر)", price: "700", image: "photos/dessert/1.jpg" },
+    { name: "كوكيز (حسب التوفر)", price: "600", image: "photos/dessert/2.jpg" },
+    { name: "حلا الكريب بالشوكولاتة", price: "2000", image: "photos/dessert/4.jpg" },
+    { name: "10 حبات مني بان كيك بالشوكولاتة العسل", price: "1200", image: "photos/dessert/5.jpg" },
+    { name: "5 حبات مني بان كيك بالشوكولاته والعسل", price: "700", image: "photos/dessert/.jpg" },
+    { name: "حلا الشعيرية", price: "600", image: "photos/dessert/.jpg" },
+    { name: "فشار", price: "600", image: "photos/dessert/.jpg" },
+    { name: "تشيزكيك لوتس (حسب التوفر)", price: "2000", image: "photos/dessert/.jpg" },
+    { name: "موس كيك (حسب التوفر)", price: "1600", image: "photos/dessert/.jpg" },
+    { name: "كيك غني بالشوكولاتة (حسب التوفر)", price: "700", image: "photos/dessert/.jpg" },
+    { name: "كيكة كوكوبيري", price: "1100", image: "" },
+    { name: "ايسكريم ون اسكوب", price: "800", image: "photos/dessert/1_ice.jpg" }
+  ],
+  "المشروبات الباردة": [
+    { name: "عصير ليمون", price: "700", image: "" },
+    { name: "عصير زبيب أسود", price: "1500", image: "" },
+    { name: "عصير منجو", price: "1200", image: "" },
+    { name: "عصير منجو بالحليب", price: "1400", image: "" },
+    { name: "عصير موز", price: "600", image: "" },
+    { name: "عصير موز بالحليب", price: "600", image: "" },
+    { name: "عصير كركديه", price: "600", image: "" },
+    { name: "عصير مكس كركديه", price: "1000", image: "" },
+    { name: "عصير فراولة", price: "1000", image: "photos/colddrinks/2.jpg" },
+    { name: "عصير فراولة بالحليب", price: "1200", image: "" },
+    { name: "عصير حبحب", price: "1200", image: "" },
+    { name: "عصير برتقال", price: "2000", image: "" },
+    { name: "سان شاين (توت ازرق, توت احمر, خوخ, فراوله, برتقال, عناب, ليمون مع نعناع)", price: "1000", image: "photos/colddrinks/1.jpg" },
+    { name: "سان باور شاين", price: "1400", image: "" },
+    { name: "عصير سان توب", price: "300", image: "" },
+    { name: "عصير سن كويك", price: "500", image: "" },
+    { name: "مشروب غازي", price: "400", image: "" },
+    { name: "ماء", price: "300", image: "" },
+    { name: "ايس موكا", price: "1300", image: "" },
+    { name: "ايس تي خوخ", price: "1000", image: "" },
+    { name: "ورد لاتيه", price: "1700", image: "" },
+    { name: "ورد مكس", price: "1500", image: "" },
+    { name: "سبانش لاتيه", price: "1400", image: "" },
+    { name: "ايس لاتيه (قهوة باردة)", price: "1200", image: "" },
+    { name: "ايس فرباتشينو (كرامل - شوكولاتة)", price: "1400", image: "" },
+    { name: "ايس امريكانو", price: "1200", image: "" },
+    { name: "حليب بارد", price: "600", image: "" },
+    { name: "عصير شمام", price: "700", image: "" },
+    { name: "كراميل لاتيه", price: "1200", image: "" }
+  ],
+  "المشروبات الساخنة": [
+    { name: "كابتشينو", price: "1000", image: "photos/hotdrinks/1.jpg" },
+    { name: "كراميل لاتيه", price: "1200", image: "" },
+    { name: "شوكولاتة ساخنة", price: "1000", image: "" },
+    { name: "موكا ساخنة", price: "1200", image: "" },
+    { name: "لاتيه ساخنة", price: "1000", image: "" },
+    { name: "اسبريسو", price: "1000", image: "" },
+    { name: "اسبريسو رومانيو", price: "1000", image: "" },
+    { name: "امريكانو", price: "1000", image: "" },
+    { name: "سبانش لاتيه ساخن", price: "1400", image: "" },
+    { name: "نيسكافي بالحليب", price: "900", image: "" },
+    { name: "شاي حليب", price: "600", image: "" },
+    { name: "شاي أحمر", price: "400", image: "" },
+    { name: "شاي أخضر", price: "400", image: "" },
+    { name: "قهوة تركي", price: "700", image: "" },
+    { name: "بن ساده", price: "600", image: "" },
+    { name: "بن حليب", price: "600", image: "" },
+    { name: "براد شاى", price: "1000", image: "" },
+    { name: "براد شاى حليب", price: "1500", image: "" },
+    { name: "زنجبيل", price: "400", image: "" }
+  ],
+  الشيش: [
+    { name: "شيشة ورد", price: "4000", image: "photos/sheshah/1.jpg" },
+    { name: "شيشة الندى", price: "4000", image: "" },
+    { name: "شيشة مكس", price: "3500", image: "" },
+    { name: "شيشة نكهات", price: "3000", image: "" },
+    { name: "شيشة شموخ", price: "4000", image: "" }
+  ]
+};
+
+    // تسجيل Service Worker (PWA)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("✅ تم تسجيل Service Worker"))
+        .catch(err => console.error("❌ فشل التسجيل:", err));
     }
-  }
 
-  function setupCategories() {
-    const grid = document.getElementById('cat-grid');
-    const cats = Object.keys(foodData);
-    grid.innerHTML = cats.map(c => `
-      <button class="category ${c==='الافطار'?'selected':''}" onclick="filterCat(this, '${c}')">
-        ${c}
-      </button>
-    `).join('');
-  }
+    // دالة عرض المنتجات بناءً على التصنيف
+    function renderFoodItems(category) {
+      const container = document.getElementById('food-list');
+      container.innerHTML = '';
+      foodData[category]?.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'food-card';
+        card.innerHTML = `
+          ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none';">` : ""}
+          <div class="food-info">
+            <h4>${item.price} <span>${item.name}</span></h4>
+            ${item.description ? `<p>${item.description}</p>` : ""}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
 
-  // 3. Render سريع باستخدام Strings بدلاً من createElement
-  function render(cat) {
-    const container = document.getElementById('food-list');
-    const items = foodData[cat] || [];
-    
-    container.innerHTML = items.map(item => `
-      <div class="food-card">
-        ${item.image ? `<img src="${item.image}" loading="lazy" alt="${item.name}">` : ''}
-        <div class="food-info">
-          <h4><span>${item.name}</span> <span style="color:#551665">${item.price}</span></h4>
-          ${item.description ? `<p>${item.description}</p>` : ''}
-        </div>
-      </div>
-    `).join('');
-  }
+    // ربط أزرار التصنيفات بالدالة
+    document.querySelectorAll('.category').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.category').forEach(btn => btn.classList.remove('selected'));
+        button.classList.add('selected');
+        const categoryText = button.innerText.trim().split('\n')[1];
+        renderFoodItems(categoryText);
+      });
+    });
 
-  function filterCat(btn, cat) {
-    document.querySelectorAll('.category').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    render(cat);
-    window.scrollTo({top: 200, behavior: 'smooth'});
-  }
-
-  // 4. تحسين البحث (Debounce) لتقليل الضغط
-  function debounceSearch() {
-    clearTimeout(timer);
-    timer = setTimeout(search, 300);
-  }
-
-  function search() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    if(!q) { render('الافطار'); return; }
-
-    const allItems = Object.values(foodData).flat();
-    const filtered = allItems.filter(i => i.name.toLowerCase().includes(q) || i.price.toString().includes(q));
-    
-    const container = document.getElementById('food-list');
-    container.innerHTML = filtered.map(item => `
-      <div class="food-card">
-        <div class="food-info"><h4>${item.name} <span>${item.price}</span></h4></div>
-      </div>
-    `).join('');
-  }
-
-  window.onload = init;
-</script>
+    // عرض قسم "الافطار" افتراضيًا عند التحميل
+    window.onload = () => {
+      renderFoodItems("الافطار");
+    };
+  </script>
 </body>
 </html>
+
+
+
+
+
+
