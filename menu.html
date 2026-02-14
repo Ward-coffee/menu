@@ -5,282 +5,180 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>منيو ورد كافيه</title>
   <link rel="icon" href="photos/logo.png" type="image/x-icon">
-  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#551665">
 
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" href="photos/logo.png">
-
   <style>
-    /* دمج محتويات style.css هنا */
-    body {
-      margin: 0;
-      padding-bottom: 100px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fff9ec;
-      color: #333;
-    }
-
-    .page-frame {
-      border: 5px solid #551665;
-      border-radius: 20px;
-      margin: 10px;
-      padding: 0;
-      box-sizing: border-box;
-      min-height: calc(100vh - 20px);
-      background: #fff;
-    }
-
-    .header {
-      background: #551665;
-      color: white;
-      padding: 8px 1%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      position: relative;
-      overflow: hidden;
-      min-height: 200px;
-    }
-
-    .logo-img, .logo-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-      animation: flash-display 20s infinite ease-in-out;
-      text-align: center;
-      max-width: 90%;
-    }
-
-    .logo-img { animation-delay: 0s; }
-    .logo-text { animation-delay: 10s; font-size: 14px; line-height: 1.6; }
-
-    @keyframes flash-display {
-      0%, 45% { opacity: 1; z-index: 2; }
-      50%, 95% { opacity: 0; z-index: 1; }
-      100% { opacity: 1; }
-    }
-
-    .search-bar {
-      margin: 15px;
-      display: flex;
-      background: #e6e3da;
-      border-radius: 12px;
-      padding: 5px 15px;
-      align-items: center;
-    }
-
-    .search-bar input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      outline: none;
-      font-size: 16px;
-      padding: 8px;
-    }
-
-    .categories-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      padding: 10px;
-      background: #fff9ec;
-    }
-
-    .category {
-      background: #e6e3da;
-      border: none;
-      padding: 10px 5px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 12px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .category.selected {
-      background: linear-gradient(135deg,#8E44AD,#551665);
-      color: white;
-    }
-
-    .food-card {
-      margin: 15px;
-      background: white;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      border: 1px solid #eee;
-    }
-
-    .food-card img { width: 100%; height: auto; display: block; }
-    .food-info { padding: 15px; text-align: right; }
-    .food-info h4 { margin: 0; font-size: 16px; display: flex; justify-content: space-between; }
-    .food-info p { font-size: 13px; color: #777; margin: 8px 0 0 0; }
-
-    /* أزرار التنقل السفلية - تم استبدال الفونت أوسم بإيموجي */
-    .bottom-nav {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background: #551665;
-      padding: 12px 0;
-      border-radius: 25px;
-      position: fixed;
-      bottom: 15px;
-      width: 90%;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-    }
-
-    .bottom-nav a {
-      color: white;
-      font-size: 24px;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    /* تحسينات CSS للأداء */
+    body { margin: 0; padding-bottom: 80px; font-family: sans-serif; background: #fff9ec; }
+    .page-frame { border: 4px solid #551665; border-radius: 15px; margin: 5px; background: #fff; min-height: 100vh; }
     
-    .bottom-nav span { font-size: 10px; margin-top: 4px; }
-
-    /* زر الرئيسية العائم */
-    .home-btn {
-      position: absolute;
-      right: 12px;
-      bottom: 12px;
-      background: linear-gradient(135deg,#8E44AD, #551665);
-      color: white;
-      padding: 8px 15px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 14px;
-      z-index: 100;
+    .header { 
+      background: #551665; color: white; min-height: 150px; 
+      display: flex; align-items: center; justify-content: center; 
+      position: relative; text-align: center; padding: 10px;
     }
 
-    /* لودر بسيط عند التحميل */
-    #loading-state { text-align: center; padding: 20px; color: #551665; font-weight: bold; }
+    /* تحسين الأنيميشن ليكون أخف على المعالج */
+    .logo-img, .logo-text { position: absolute; width: 80%; transition: opacity 0.5s; }
+    .hidden { opacity: 0; visibility: hidden; }
+    .visible { opacity: 1; visibility: visible; }
+
+    .search-bar { margin: 10px; display: flex; background: #eee; border-radius: 10px; padding: 5px 15px; }
+    .search-bar input { flex: 1; border: none; background: transparent; padding: 10px; font-size: 16px; outline: none; }
+
+    .categories-grid { 
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; 
+      padding: 10px; sticky; top: 0; z-index: 10; background: #fff9ec;
+    }
+    .category { background: #e6e3da; border: none; padding: 8px 2px; border-radius: 8px; font-size: 11px; cursor: pointer; }
+    .category.selected { background: #551665; color: white; }
+
+    .food-card { 
+      margin: 10px; background: white; border-radius: 12px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+    }
+    .food-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px 12px 0 0; background: #f0f0f0; }
+    .food-info { padding: 12px; }
+    .food-info h4 { margin: 0; display: flex; justify-content: space-between; font-size: 15px; }
+    
+    .bottom-nav {
+      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+      width: 90%; background: #551665; display: flex; justify-content: space-around;
+      padding: 10px 0; border-radius: 50px; z-index: 1000;
+    }
+    .bottom-nav a { color: white; text-decoration: none; font-size: 20px; text-align: center; }
+    .bottom-nav span { display: block; font-size: 10px; }
+
+    #loading-state { text-align: center; padding: 20px; font-weight: bold; color: #551665; }
   </style>
 </head>
-
 <body>
 
-  <div class="page-frame">
-    <div class="header">
-      <img src="photos/logo.png" alt="Logo" class="logo-img">
-      <div class="logo-text">
-        مطعم وكافيه "ورد"<br>
-        طعام صحي بمكونات طبيعية طازجة.<br>
-        صور أطباقنا واقعية كما تُقدَّم.
-      </div>
-      <a href="index.html" class="home-btn">🏠 الرئيسية</a>
-    </div>
-
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="ابحث عن وجبة أو سعر..." oninput="search()">
-      <span>🔍</span>
-    </div>
-
-    <div class="categories-grid">
-      <button class="category selected" onclick="filterCat(this, 'الافطار')">🥗<br>الافطار</button>
-      <button class="category" onclick="filterCat(this, 'ساندويتش')">🥪<br>ساندويتش</button>
-      <button class="category" onclick="filterCat(this, 'البيتزا')">🍕<br>البيتزا</button>
-      <button class="category" onclick="filterCat(this, 'الاطباق')">🍽️<br>الاطباق</button>
-      <button class="category" onclick="filterCat(this, 'الحلويات')">🍰<br>حلويات</button>
-      <button class="category" onclick="filterCat(this, 'المشروبات الباردة')">🥤<br>بارد</button>
-      <button class="category" onclick="filterCat(this, 'المشروبات الساخنة')">☕<br>ساخن</button>
-      <button class="category" onclick="filterCat(this, 'سناك')">🥨<br>سناك</button>
-    </div>
-
-    <div id="loading-state">جاري تحميل الشهي... 🌸</div>
-    <div id="food-list"></div>
+<div class="page-frame">
+  <div class="header" id="header-box">
+    <img src="photos/logo.png" alt="Logo" class="logo-img visible" id="logo-img">
+    <div class="logo-text hidden" id="logo-txt">مطعم وكافيه ورد<br>طعم صحي وطبيعي</div>
   </div>
 
-  <nav class="bottom-nav">
-    <a href="fedback.html">💬<span>آرائكم</span></a>
-    <a href="index.html">🏠<span>الرئيسية</span></a>
-    <a href="map.html">📍<span>موقعنا</span></a>
-  </nav>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="بحث عن وجبة أو سعر..." onkeyup="debounceSearch()">
+  </div>
+
+  <div class="categories-grid" id="cat-grid">
+    </div>
+
+  <div id="loading-state">جاري التحميل... 🌸</div>
+  <div id="food-list"></div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="fedback.html">💬<span>آرائكم</span></a>
+  <a href="index.html">🏠<span>الرئيسية</span></a>
+  <a href="map.html">📍<span>موقعنا</span></a>
+</nav>
 
 <script>
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwF6QRoxTgFhZiU1fkCIOkUiIsbnNfH5rRufLxz5bg8HhnCJcjs675LZI4gtarBFgRB/exec";
   let foodData = {};
+  let timer;
 
-  async function loadMenu() {
-    const cache = localStorage.getItem('ward_menu_cache');
-    if (cache) {
-      foodData = JSON.parse(cache);
+  // 1. تبديل اللوجو والنص بشكل أخف
+  setInterval(() => {
+    const img = document.getElementById('logo-img');
+    const txt = document.getElementById('logo-txt');
+    img.classList.toggle('hidden'); img.classList.toggle('visible');
+    txt.classList.toggle('hidden'); txt.classList.toggle('visible');
+  }, 5000);
+
+  // 2. جلب البيانات مع التخزين المؤقت الذكي
+  async function init() {
+    const cached = localStorage.getItem('menu_data');
+    if (cached) {
+      foodData = JSON.parse(cached);
+      setupCategories();
       render('الافطار');
       document.getElementById('loading-state').style.display = 'none';
     }
-
+    
     try {
       const res = await fetch(`${SCRIPT_URL}?action=read`);
-      const data = await res.json();
+      const rawData = await res.json();
       
-      // تنظيم البيانات
+      // تنظيم البيانات بشكل أسرع للبحث والفلترة
       const organized = {};
-      data.forEach(item => {
+      rawData.forEach(item => {
         if (!organized[item.category]) organized[item.category] = [];
         organized[item.category].push(item);
       });
 
       foodData = organized;
-      localStorage.setItem('ward_menu_cache', JSON.stringify(organized));
-      if (!cache) render('الافطار');
-      document.getElementById('loading-state').style.display = 'none';
+      localStorage.setItem('menu_data', JSON.stringify(organized));
+      
+      if (!cached) {
+        setupCategories();
+        render('الافطار');
+        document.getElementById('loading-state').style.display = 'none';
+      }
     } catch (e) {
-      console.log("Error loading data");
+      console.error("الإنترنت ضعيف جداً");
     }
   }
 
+  function setupCategories() {
+    const grid = document.getElementById('cat-grid');
+    const cats = Object.keys(foodData);
+    grid.innerHTML = cats.map(c => `
+      <button class="category ${c==='الافطار'?'selected':''}" onclick="filterCat(this, '${c}')">
+        ${c}
+      </button>
+    `).join('');
+  }
+
+  // 3. Render سريع باستخدام Strings بدلاً من createElement
   function render(cat) {
     const container = document.getElementById('food-list');
-    container.innerHTML = '';
     const items = foodData[cat] || [];
-
-    items.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'food-card';
-      card.innerHTML = `
-        ${item.image ? `<img src="${item.image}" loading="lazy" onerror="this.style.display='none'">` : ''}
+    
+    container.innerHTML = items.map(item => `
+      <div class="food-card">
+        ${item.image ? `<img src="${item.image}" loading="lazy" alt="${item.name}">` : ''}
         <div class="food-info">
-          <h4><span>${item.name}</span> <span style="color:#551665">${item.price} ر.ي</span></h4>
+          <h4><span>${item.name}</span> <span style="color:#551665">${item.price}</span></h4>
           ${item.description ? `<p>${item.description}</p>` : ''}
         </div>
-      `;
-      container.appendChild(card);
-    });
+      </div>
+    `).join('');
   }
 
   function filterCat(btn, cat) {
     document.querySelectorAll('.category').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     render(cat);
+    window.scrollTo({top: 200, behavior: 'smooth'});
+  }
+
+  // 4. تحسين البحث (Debounce) لتقليل الضغط
+  function debounceSearch() {
+    clearTimeout(timer);
+    timer = setTimeout(search, 300);
   }
 
   function search() {
     const q = document.getElementById('searchInput').value.toLowerCase();
-    const container = document.getElementById('food-list');
-    container.innerHTML = '';
+    if(!q) { render('الافطار'); return; }
+
+    const allItems = Object.values(foodData).flat();
+    const filtered = allItems.filter(i => i.name.toLowerCase().includes(q) || i.price.toString().includes(q));
     
-    Object.values(foodData).flat().forEach(item => {
-      if (item.name.toLowerCase().includes(q)) {
-        const card = document.createElement('div');
-        card.className = 'food-card';
-        card.innerHTML = `<div class="food-info"><h4>${item.name} <span>${item.price}</span></h4></div>`;
-        container.appendChild(card);
-      }
-    });
+    const container = document.getElementById('food-list');
+    container.innerHTML = filtered.map(item => `
+      <div class="food-card">
+        <div class="food-info"><h4>${item.name} <span>${item.price}</span></h4></div>
+      </div>
+    `).join('');
   }
 
-  window.onload = loadMenu;
+  window.onload = init;
 </script>
-
 </body>
 </html>
