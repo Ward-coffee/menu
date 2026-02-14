@@ -1,375 +1,286 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>منيو ورد كافيه</title>
-  <!-- أيقونة الموقع -->
   <link rel="icon" href="photos/logo.png" type="image/x-icon">
-  <!-- ملف التصميم  -->
-  <link rel="stylesheet" href="style.css">
-  <!-- ملف المانيفست الخاص بالتطبيق -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#551665">
 
-  <!-- دعم التثبيت على iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="apple-touch-icon" href="photos/logo.png">
 
-  <!-- زر الرجوع للصفحة الرئيسية - ستايل مدمج لإظهاره مباشرة -->
   <style>
-    /* زر الرئيسية */
+    /* دمج محتويات style.css هنا */
+    body {
+      margin: 0;
+      padding-bottom: 100px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff9ec;
+      color: #333;
+    }
+
+    .page-frame {
+      border: 5px solid #551665;
+      border-radius: 20px;
+      margin: 10px;
+      padding: 0;
+      box-sizing: border-box;
+      min-height: calc(100vh - 20px);
+      background: #fff;
+    }
+
+    .header {
+      background: #551665;
+      color: white;
+      padding: 8px 1%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    .logo-img, .logo-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      animation: flash-display 20s infinite ease-in-out;
+      text-align: center;
+      max-width: 90%;
+    }
+
+    .logo-img { animation-delay: 0s; }
+    .logo-text { animation-delay: 10s; font-size: 14px; line-height: 1.6; }
+
+    @keyframes flash-display {
+      0%, 45% { opacity: 1; z-index: 2; }
+      50%, 95% { opacity: 0; z-index: 1; }
+      100% { opacity: 1; }
+    }
+
+    .search-bar {
+      margin: 15px;
+      display: flex;
+      background: #e6e3da;
+      border-radius: 12px;
+      padding: 5px 15px;
+      align-items: center;
+    }
+
+    .search-bar input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 16px;
+      padding: 8px;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 10px;
+      background: #fff9ec;
+    }
+
+    .category {
+      background: #e6e3da;
+      border: none;
+      padding: 10px 5px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .category.selected {
+      background: linear-gradient(135deg,#8E44AD,#551665);
+      color: white;
+    }
+
+    .food-card {
+      margin: 15px;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+    }
+
+    .food-card img { width: 100%; height: auto; display: block; }
+    .food-info { padding: 15px; text-align: right; }
+    .food-info h4 { margin: 0; font-size: 16px; display: flex; justify-content: space-between; }
+    .food-info p { font-size: 13px; color: #777; margin: 8px 0 0 0; }
+
+    /* أزرار التنقل السفلية - تم استبدال الفونت أوسم بإيموجي */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: #551665;
+      padding: 12px 0;
+      border-radius: 25px;
+      position: fixed;
+      bottom: 15px;
+      width: 90%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      color: white;
+      font-size: 24px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .bottom-nav span { font-size: 10px; margin-top: 4px; }
+
+    /* زر الرئيسية العائم */
     .home-btn {
       position: absolute;
-      right: 12px;    /* وضع الزر في الجهة اليمنى (لـ RTL هذه هي الزاوية الصحيحة) */
-      bottom: 12px;   /* وضع الزر في الأسفل */
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      background: linear-gradient(135deg,#8E44AD 0%, #551665 100%);
-      color: #fff;
+      right: 12px;
+      bottom: 12px;
+      background: linear-gradient(135deg,#8E44AD, #551665);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 10px;
       text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(106,13,173,0.12);
-      font-weight: 600;
-      font-family: inherit;
-      z-index: 50;
-      border: 1px solid rgba(255,255,255,0.12);
-      -webkit-tap-highlight-color: transparent;
-      /* ضمان أن النص والآيكون يتناسبان مع RTL */
-      direction: rtl;
+      font-size: 14px;
+      z-index: 100;
     }
 
-    .home-btn svg { width:18px; height:18px; display:block; flex-shrink:0; }
-
-    .home-btn span { font-size: 15px; line-height: 1; }
-
-    .home-btn:active { transform: translateY(1px); }
-    .home-btn:focus { outline: 3px solid rgba(138,81,201,0.16); outline-offset: 3px; }
-
-    /* استجابة على الشاشات الصغيرة */
-    @media (max-width:480px) {
-      .home-btn { right: 10px; bottom: 10px; padding: 8px 10px; border-radius:10px; }
-      .home-btn span { font-size: 14px; }
-      .home-btn svg { width:16px; height:16px; }
-      .header { height: 200px; } /* يتماشى مع تقليل ارتفاع الهيدر على الهاتف */
-    }
-
-    /* في حال وجود conflict مع style.css نرفع z-index */
-    .header { position: relative; overflow: hidden; }
+    /* لودر بسيط عند التحميل */
+    #loading-state { text-align: center; padding: 20px; color: #551665; font-weight: bold; }
   </style>
 </head>
 
 <body>
-  <!-- رسالة/رابط طلب الإذن لتثبيت التطبيق -->
-  <div id="installPromptContainer" style="
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 9999;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 6px 6px;
-      border-radius: 10px;
-      color: white;
-      font-size: 14px;
-      display: none;
-    ">
-    هذا الموقع يمكن تثبيته كتطبيق على جهازك.<br>
-    <a href="#" id="installLink" style="
-        color: #FFD700;
-        text-decoration: underline;
-        cursor: pointer;
-      ">
-      اضغط هنا لتثبيت التطبيق
-    </a>
-  </div>
 
-  <!-- ملاحظة تثبيت خاصة بـ iOS -->
-  <div id="iosInstallHint" style="
-      display: none;
-      position: fixed;
-      bottom: 80px;
-      left: 20px;
-      z-index: 9999;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 6px 6px;
-      border-radius: 10px;
-      color: white;
-      font-size: 14px;
-    ">
-    لتثبيت التطبيق: اضغط على زر <b>المشاركة</b> ثم اختر <b>"إضافة إلى الشاشة الرئيسية"</b>.
-  </div>
-
-  <script>
-    let deferredPrompt;
-    const installPromptContainer = document.getElementById('installPromptContainer');
-    const installLink = document.getElementById('installLink');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installPromptContainer.style.display = 'block';
-    });
-
-    installLink.addEventListener('click', (event) => {
-      event.preventDefault();
-      installPromptContainer.style.display = 'none';
-
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('✅ المستخدم وافق على التثبيت');
-          } else {
-            console.log('❌ المستخدم رفض التثبيت');
-          }
-          deferredPrompt = null;
-        });
-      }
-    });
-
-    const isIOS = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-    const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
-
-    if (isIOS && !isInStandaloneMode) {
-      document.getElementById('iosInstallHint').style.display = 'block';
-    }
-  </script>
-
-  <!-- بداية محتوى الصفحة -->
   <div class="page-frame">
-    <!-- الشريط العلوي -->
-    <div class="header" style="position: relative; height: 200px;">
+    <div class="header">
       <img src="photos/logo.png" alt="Logo" class="logo-img">
       <div class="logo-text">
-        مطعم وكافيه "ورد" يقدم تجربة طعام صحية وشهية بمكونات طبيعية طازجة.
-        نستخدم زيت الزيتون ونغسل الخضروات بعناية لضمان نظافتها.
-        نبتعد عن المنكهات الصناعية والملح الصيني،
-        ونعتمد أدوات طهي صحية ومعايير نظافة عالمية.
-        صور أطباقنا واقعية كما تُقدَّم، لأن الأمانة تبدأ من المطبخ.
+        مطعم وكافيه "ورد"<br>
+        طعام صحي بمكونات طبيعية طازجة.<br>
+        صور أطباقنا واقعية كما تُقدَّم.
       </div>
+      <a href="index.html" class="home-btn">🏠 الرئيسية</a>
     </div>
 
-    <!-- شريط البحث -->
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="بحث...">
-      <button onclick="search()">🔍</button>
+      <input type="text" id="searchInput" placeholder="ابحث عن وجبة أو سعر..." oninput="search()">
+      <span>🔍</span>
     </div>
 
-    <script>
-      function search() {
-        const query = document.getElementById('searchInput').value.trim();
-        const container = document.getElementById('food-list');
-        container.innerHTML = '';
-
-        if (!query) {
-          alert("الرجاء إدخال كلمة للبحث");
-          return;
-        }
-
-        let resultsFound = false;
-        const maxPrice = !isNaN(query) ? parseFloat(query) : null;
-
-        for (const category in foodData) {
-          foodData[category].forEach(item => {
-            const itemName = item.name || "";
-            const itemPrice = parseFloat(item.price) || 0;
-
-            const matchesName = itemName.includes(query);
-            const matchesPrice = maxPrice !== null && itemPrice <= maxPrice;
-
-            if (matchesName || matchesPrice) {
-              resultsFound = true;
-              const card = document.createElement('div');
-              card.className = 'food-card';
-              card.innerHTML = `
-                ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none';">` : ""}
-                <div class="food-info">
-                  <h4>${item.price} <span>${item.name}</span></h4>
-                  ${item.description ? `<p>${item.description}</p>` : ""}
-                </div>
-              `;
-              container.appendChild(card);
-            }
-          });
-        }
-
-        if (!resultsFound) {
-          container.innerHTML = `<p style="text-align:center; padding: 20px;">لا توجد نتائج تطابق "${query}"</p>`;
-        }
-      }
-    </script>
-
-    <!-- القائمة الأفقية -->
-    <!-- القائمة (شبكة التصنيفات) -->
     <div class="categories-grid">
-      <button class="category selected">🥗<br>الافطار</button>
-      <button class="category">🥪<br>ساندويتش</button>
-      <button class="category">🍕<br>البيتزا</button>
-      <button class="category">🌱<br>السلطات</button>
-      <button class="category">🍲<br>الشوربات</button>
-      <button class="category">🥨<br>سناك</button>
-      <button class="category">🍽️<br>الاطباق</button>
-      <button class="category">🍱<br>وجبات الأطفال</button>
-      <button class="category">🍰<br>الحلويات و الآيسكريم</button>
-      <button class="category">🥤<br>المشروبات الباردة</button>
-      <button class="category">☕️<br>المشروبات الساخنة</button>
-      <button class="category">💨<br>الشيش</button>
+      <button class="category selected" onclick="filterCat(this, 'الافطار')">🥗<br>الافطار</button>
+      <button class="category" onclick="filterCat(this, 'ساندويتش')">🥪<br>ساندويتش</button>
+      <button class="category" onclick="filterCat(this, 'البيتزا')">🍕<br>البيتزا</button>
+      <button class="category" onclick="filterCat(this, 'الاطباق')">🍽️<br>الاطباق</button>
+      <button class="category" onclick="filterCat(this, 'الحلويات')">🍰<br>حلويات</button>
+      <button class="category" onclick="filterCat(this, 'المشروبات الباردة')">🥤<br>بارد</button>
+      <button class="category" onclick="filterCat(this, 'المشروبات الساخنة')">☕<br>ساخن</button>
+      <button class="category" onclick="filterCat(this, 'سناك')">🥨<br>سناك</button>
     </div>
 
-    <!-- قسم الطعام (يتم ملؤه ديناميكيًا) -->
+    <div id="loading-state">جاري تحميل الشهي... 🌸</div>
     <div id="food-list"></div>
+  </div>
 
-  <!-- أزرار التنقل السفلية -->
   <nav class="bottom-nav">
-    <a href="fedback.html" aria-label="الشكاوى والاقتراحات">
-      <i class="fas fa-comment-dots"></i>
-    </a>
-    <a href="index.html" aria-label="الصفحة الرئيسية">
-      <i class="fas fa-home"></i>
-    </a>
-    <a href="map.html" aria-label="صفحة الموقع">
-      <i class="fas fa-map-marker-alt"></i>
-    </a>
+    <a href="fedback.html">💬<span>آرائكم</span></a>
+    <a href="index.html">🏠<span>الرئيسية</span></a>
+    <a href="map.html">📍<span>موقعنا</span></a>
   </nav>
 
-
-
-  <!-- سكربت عرض البيانات -->
 <script>
-  // إعدادات الربط
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwF6QRoxTgFhZiU1fkCIOkUiIsbnNfH5rRufLxz5bg8HhnCJcjs675LZI4gtarBFgRB/exec";
-  let foodData = {}; // سيتم ملؤها من السيرفر
+  let foodData = {};
 
-  // دالة جلب البيانات مع نظام الكاش
-  async function fetchMenuData() {
-    const cacheKey = 'ward_menu_cache';
-    const cachedData = localStorage.getItem(cacheKey);
-    
-    // 1. عرض البيانات من الكاش فوراً إذا وجدت لتسريع التشغيل
-    if (cachedData) {
-      foodData = JSON.parse(cachedData);
-      renderFoodItems("الافطار"); 
-      console.log("⚡ تم التحميل من الكاش");
+  async function loadMenu() {
+    const cache = localStorage.getItem('ward_menu_cache');
+    if (cache) {
+      foodData = JSON.parse(cache);
+      render('الافطار');
+      document.getElementById('loading-state').style.display = 'none';
     }
 
     try {
-      // 2. جلب البيانات الحديثة من Google Sheets في الخلفية
-      const response = await fetch(`${SCRIPT_URL}?action=read`);
-      const rawData = await response.json();
+      const res = await fetch(`${SCRIPT_URL}?action=read`);
+      const data = await res.json();
       
-      // 3. تحويل البيانات من شكل List إلى شكل تصنيفات (Group by Category)
-      const organizedData = {};
-      rawData.forEach(item => {
-        if (!organizedData[item.category]) {
-          organizedData[item.category] = [];
-        }
-        organizedData[item.category].push({
-          name: item.name,
-          price: item.price,
-          image: item.image,
-          description: item.description || ""
-        });
+      // تنظيم البيانات
+      const organized = {};
+      data.forEach(item => {
+        if (!organized[item.category]) organized[item.category] = [];
+        organized[item.category].push(item);
       });
 
-      // 4. تحديث الكاش والواجهة بالبيانات الجديدة
-      foodData = organizedData;
-      localStorage.setItem(cacheKey, JSON.stringify(organizedData));
-      
-      // إذا لم يكن هناك كاش سابق، نعرض البيانات الآن
-      if (!cachedData) {
-        renderFoodItems("الافطار");
-      }
-      console.log("🔄 تم تحديث البيانات من السيرفر");
-    } catch (error) {
-      console.error("❌ خطأ في جلب البيانات:", error);
+      foodData = organized;
+      localStorage.setItem('ward_menu_cache', JSON.stringify(organized));
+      if (!cache) render('الافطار');
+      document.getElementById('loading-state').style.display = 'none';
+    } catch (e) {
+      console.log("Error loading data");
     }
   }
 
-  // دالة عرض المنتجات بناءً على التصنيف (تم تحسينها)
-  function renderFoodItems(category) {
+  function render(cat) {
     const container = document.getElementById('food-list');
     container.innerHTML = '';
-    
-    // معالجة أسماء التصنيفات الطويلة أو المختلفة قليلاً
-    const items = foodData[category] || [];
-    
-    if (items.length === 0) {
-      container.innerHTML = `<p style="text-align:center; padding:20px; color:#888;">لا توجد أصناف في هذا القسم حالياً</p>`;
-      return;
-    }
+    const items = foodData[cat] || [];
 
     items.forEach(item => {
       const card = document.createElement('div');
       card.className = 'food-card';
       card.innerHTML = `
-        ${item.image ? `<img src="${item.image}" alt="${item.name}" loading="lazy" onerror="this.style.display='none';">` : ""}
+        ${item.image ? `<img src="${item.image}" loading="lazy" onerror="this.style.display='none'">` : ''}
         <div class="food-info">
-          <h4>${item.price} <span>${item.name}</span></h4>
-          ${item.description ? `<p>${item.description}</p>` : ""}
+          <h4><span>${item.name}</span> <span style="color:#551665">${item.price} ر.ي</span></h4>
+          ${item.description ? `<p>${item.description}</p>` : ''}
         </div>
       `;
       container.appendChild(card);
     });
   }
 
-  // دالة البحث الديناميكية
+  function filterCat(btn, cat) {
+    document.querySelectorAll('.category').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    render(cat);
+  }
+
   function search() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const q = document.getElementById('searchInput').value.toLowerCase();
     const container = document.getElementById('food-list');
-    
-    if (!query) return;
-
     container.innerHTML = '';
-    let found = false;
-
+    
     Object.values(foodData).flat().forEach(item => {
-      if (item.name.toLowerCase().includes(query) || (item.price && item.price.toString().includes(query))) {
-        found = true;
+      if (item.name.toLowerCase().includes(q)) {
         const card = document.createElement('div');
         card.className = 'food-card';
-        card.innerHTML = `
-          ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none';">` : ""}
-          <div class="food-info">
-            <h4>${item.price} <span>${item.name}</span></h4>
-            ${item.description ? `<p>${item.description}</p>` : ""}
-          </div>
-        `;
+        card.innerHTML = `<div class="food-info"><h4>${item.name} <span>${item.price}</span></h4></div>`;
         container.appendChild(card);
       }
     });
-
-    if (!found) {
-      container.innerHTML = `<p style="text-align:center; padding:20px;">لا توجد نتائج مطابقة</p>`;
-    }
   }
 
-  // ربط الأزرار
-  document.querySelectorAll('.category').forEach(button => {
-    button.addEventListener('click', function() {
-      document.querySelectorAll('.category').forEach(btn => btn.classList.remove('selected'));
-      this.classList.add('selected');
-      
-      // استخراج النص فقط من الزر (تجاهل الإيموجي والسطر الجديد)
-      const categoryName = this.innerText.split('\n').pop().trim();
-      renderFoodItems(categoryName);
-    });
-  });
-
-  // تشغيل الجلب عند تحميل الصفحة
-  window.onload = () => {
-    fetchMenuData();
-  };
+  window.onload = loadMenu;
 </script>
+
 </body>
 </html>
-
-
-
-
-
-
